@@ -1,4 +1,6 @@
 import { useState } from 'react'
+import TinyTalkersApp from './products/TinyTalkersApp'
+import TimekeepingApp from './products/TimekeepingApp'
 
 // Oikos Technologies landing page — matches reference design
 
@@ -189,7 +191,7 @@ function PageShell({ children, onNav }: { children: React.ReactNode; onNav: (pag
 
 // ── Landing page ─────────────────────────────────────────────────────────────
 
-function LandingPage({ onNav }: { onNav: (page: string) => void }) {
+function LandingPage({ onNav, onLaunch }: { onNav: (page: string) => void; onLaunch: (product: string) => void }) {
   return (
     <PageShell onNav={onNav}>
       {/* Logo */}
@@ -259,7 +261,11 @@ function LandingPage({ onNav }: { onNav: (page: string) => void }) {
               </p>
               <a
                 href="#"
-                onClick={e => e.preventDefault()}
+                onClick={e => {
+                  e.preventDefault()
+                  if (product.name === 'TinyTalkers') onLaunch('TinyTalkers')
+                  if (product.name === 'Time Keeping App') onLaunch('Timekeeping')
+                }}
                 style={{
                   display: 'block',
                   width: '100%',
@@ -635,7 +641,22 @@ export default function App() {
     if (['Contact', 'About', 'Home'].includes(label)) setPage(label)
   }
 
+  if (page === 'Timekeeping') {
+    return (
+      <>
+        <div style={{ padding: '12px 24px', background: '#fff', borderBottom: '1px solid #e5e7eb' }}>
+          <button onClick={() => setPage('Home')} style={{ border: 0, background: 'none', cursor: 'pointer', font: 'inherit' }}>
+            ← Oikos home
+          </button>
+        </div>
+        <TimekeepingApp />
+      </>
+    )
+  }
+
+  if (page === 'TinyTalkers') return <TinyTalkersApp onExit={() => setPage('Home')} />
+
   if (page === 'Contact') return <ContactPage onNav={handleNav} />
   if (page === 'About') return <AboutPage onNav={handleNav} />
-  return <LandingPage onNav={handleNav} />
+  return <LandingPage onNav={handleNav} onLaunch={setPage} />
 }
